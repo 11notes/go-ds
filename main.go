@@ -36,7 +36,7 @@ func main(){
 				if len(matches) > 0 {
 					if len(matches[0]) > 2 {
 						bytesBefore, _ := strconv.Atoi(matches[0][1])
-						bytesAfter, _ := strconv.Atoi(matches[0][2])						
+						bytesAfter, _ := strconv.Atoi(matches[0][2])
 						fmt.Fprintf(os.Stdout, "file %s shrunk by %s (~%s)\n", file, matches[0][3], prettyByteSize(bytesBefore - bytesAfter))
 					}
 				}
