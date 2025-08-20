@@ -29,9 +29,7 @@ func main(){
 			cmd := exec.Command("/usr/local/bin/upx", "-q", "--no-backup", "-9", "--best", "--lzma", file)
 			cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid:true}
 			stdout, err := cmd.Output()
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "file %s could not be shrunk (%s)\n", file, err)
-			}else{
+			if err == nil {
 				matches := regexp.MustCompile(`(\d+)\s+->\s+(\d+)\s+(\S+)`).FindAllStringSubmatch(string(stdout), -1)
 				if len(matches) > 0 {
 					if len(matches[0]) > 2 {
