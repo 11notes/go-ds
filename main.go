@@ -3,12 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
-	"syscall"
 	"regexp"
 	"strconv"
 	"math"
 	"io/ioutil"
+	"github.com/11notes/go-eleven"
 )
 
 const UPX string = "/usr/local/bin/upx"
@@ -62,16 +61,14 @@ func main(){
 				os.Remove(STORE)
 			}else{
 				if file != UPX && file != DS {
-					cmd := exec.Command(UPX, "-q", "--no-backup", "-9", "--best", "--lzma", file)
-					cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid:true}
-					stdout, err := cmd.Output()
+					stdout, err := eleven.Util.Run(UPX, []string{"-q", "--no-backup", "-9", file})
 					if err == nil {
 						matches := regexp.MustCompile(`(\d+)\s+->\s+(\d+)\s+(\S+)`).FindAllStringSubmatch(string(stdout), -1)
 						if len(matches) > 0 {
 							if len(matches[0]) > 2 {
 								bytesBefore, _ := strconv.Atoi(matches[0][1])
 								bytesAfter, _ := strconv.Atoi(matches[0][2])
-								fmt.Fprintf(os.Stdout, "file %s shrunk by %s (~%s)\n", file, matches[0][3], prettyByteSize(bytesBefore - bytesAfter))
+								eleven.Log("INF", "file %s shrunk by %s (~%s)", file, matches[0][3], prettyByteSize(bytesBefore - bytesAfter))
 								addTotal(bytesBefore - bytesAfter)
 							}
 						}
